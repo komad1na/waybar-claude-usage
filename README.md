@@ -63,3 +63,9 @@ Edit the colors (`C_LOW` / `C_WARN` / `C_DANGER`) and the icon at the top of
   block handles this with `#custom-claude { color: inherit; }`.
 - **Uninstall:** `./uninstall.sh` removes the module and styles (with backups),
   clears the cache, and optionally deletes your credentials.
+
+## Support
+
+If this module saves you a tab-switch or two, you can buy me a pizza:
+
+[![Buy me a pizza](https://img.buymeacoffee.com/button-api/?text=Buy%20me%20a%20pizza&emoji=%F0%9F%8D%95&slug=komadina&button_colour=FFDD00&font_colour=000000&font_family=Cookie&outline_colour=000000&coffee_colour=ffffff)](https://buymeacoffee.com/komadina)
