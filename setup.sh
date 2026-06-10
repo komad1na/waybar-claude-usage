@@ -31,8 +31,12 @@ if [[ "$SK" != sk-ant-sid* ]]; then
 fi
 
 echo "Detecting organization..."
-orgs=$(curl -sS --max-time 20 -A "$UA" -H "Cookie: sessionKey=$SK" \
-  -H 'Accept: application/json' "https://claude.ai/api/organizations" 2>/dev/null)
+# The cookie goes to curl as stdin config (-K -) so the sessionKey never
+# appears in the process list or in error output.
+orgs=$(printf 'header = "Cookie: sessionKey=%s"\n' "$SK" |
+  curl -sS -K - --max-time 20 --retry 2 --retry-delay 1 --compressed \
+    -A "$UA" -H 'Accept: application/json' \
+    "https://claude.ai/api/organizations" 2>/dev/null) || orgs=""
 
 if ! echo "$orgs" | jq -e 'type == "array"' >/dev/null 2>&1; then
   echo "Could not fetch organizations (Cloudflare challenge or invalid key). Try again." >&2

@@ -40,6 +40,9 @@ re-run `./setup.sh` with a fresh one.
 - **Hover** for exact percentages and reset times, with time remaining, e.g.
   `resets Wed 17 Jun 11:00 (in 6d 14h)`.
 - **Left-click** opens claude.ai; **right-click** refreshes now.
+- You also get a **desktop notification** (via `notify-send`) when a window
+  crosses the warn or danger threshold — once per crossing, re-armed after the
+  window resets.
 
 The numbers are colored by how close you are to a limit:
 
@@ -50,8 +53,16 @@ The numbers are colored by how close you are to a limit:
 | ≥ 90 % | red `#a55555`   |
 
 Edit the colors (`C_LOW` / `C_WARN` / `C_DANGER`) and the icon at the top of
-`claude-usage.sh`; thresholds live in `credentials.json` (`warnThreshold` /
-`dangerThreshold`). Restart Waybar after changes.
+`claude-usage.sh`. The rest is tunable under `settings` in `credentials.json`:
+
+| Setting          | Default | Meaning                                      |
+|------------------|---------|----------------------------------------------|
+| `warnThreshold`  | `75`    | % where numbers turn amber                   |
+| `dangerThreshold`| `90`    | % where numbers turn red                     |
+| `cacheTtl`       | `900`   | seconds before cached data is marked `stale` |
+| `notify`         | `true`  | desktop notifications on threshold crossings |
+
+Restart Waybar after changes.
 
 ## Notes
 
