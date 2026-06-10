@@ -53,10 +53,11 @@ cd waybar-claude-usage
 
 1. Ask for your **sessionKey** (see below).
 2. Auto-detect your `organizationId` from the Claude API.
-3. Save both to `credentials.json` (`chmod 600`, git-ignored).
-4. Add the `custom/claude` module to `~/.config/waybar/config.jsonc`.
-5. Append a small style block to `~/.config/waybar/style.css`.
-6. Restart Waybar (via `omarchy restart waybar` if available, otherwise it
+3. Let you pick how **reset times** are formatted in the tooltip (a small menu).
+4. Save everything to `credentials.json` (`chmod 600`, git-ignored).
+5. Add the `custom/claude` module to `~/.config/waybar/config.jsonc`.
+6. Append a small style block to `~/.config/waybar/style.css`.
+7. Restart Waybar (via `omarchy restart waybar` if available, otherwise it
    restarts `waybar` directly).
 
 Both Waybar files are backed up (`*.bak.<timestamp>`) before they're touched. If
@@ -79,7 +80,9 @@ Once installed, the module sits in your bar and updates itself:
 
 - The two numbers are your **5-hour session** and **7-day weekly** usage as a
   percentage of your plan limit.
-- **Hover** for a tooltip with exact percentages and reset times.
+- **Hover** for a tooltip with exact percentages and reset times — each reset
+  shows the time remaining in parentheses, e.g. `resets Wed 17 Jun 11:00
+  (in 6d 14h)`.
 - **Left-click** opens claude.ai. **Right-click** forces an immediate refresh.
 
 ### Updating the sessionKey
@@ -117,6 +120,9 @@ top of `claude-usage.sh`, and the thresholds with `warnThreshold` /
 
 - **Icon**: change `ICON='󰚩'` in `claude-usage.sh`.
 - **Show one number only**: edit the `text=` line in `claude-usage.sh`.
+- **Reset-time format**: chosen during `setup.sh` and stored as
+  `settings.dateFormat` (a `date(1)` format string) in `credentials.json`.
+  Re-run `setup.sh` to change it, or edit the value directly.
 - **Poll interval / position**: edit the `custom/claude` module in
   `~/.config/waybar/config.jsonc`, then restart Waybar.
 

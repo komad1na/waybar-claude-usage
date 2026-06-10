@@ -3,8 +3,9 @@
 #  1. Asks for your sessionKey (grab it from the browser: DevTools -> Application
 #     -> Cookies -> https://claude.ai -> sessionKey).
 #  2. Auto-detects your organizationId via the Claude API.
-#  3. Saves both to ./credentials.json (chmod 600).
-#  4. Installs the "custom/claude" module into your Waybar config and restarts it.
+#  3. Lets you pick the date format for reset times shown in the tooltip.
+#  4. Saves everything to ./credentials.json (chmod 600).
+#  5. Installs the "custom/claude" module into your Waybar config and restarts it.
 #
 # Re-runnable: updating the sessionKey later is just re-running this script.
 
@@ -51,9 +52,43 @@ fi
 ORG_NAME=$(echo "$orgs" | jq -r --arg id "$ORG" '.[] | select((.uuid // .id)==$id) | .name // "?"')
 echo "Found organization: $ORG_NAME ($ORG)"
 
-# Save credentials.
+# ---- Pick the date format used for reset times in the tooltip ----
+DATE_FMTS=('%a %d %b %H:%M' '%d.%m. %H:%M' '%Y-%m-%d %H:%M' '%H:%M' '%a %I:%M %p')
+
+# Default to the currently saved format if re-running, else option 1.
+DEFAULT_IDX=1
+if [ -r "$CRED_FILE" ]; then
+  cur=$(jq -r '.settings.dateFormat // empty' "$CRED_FILE" 2>/dev/null || true)
+  n=1; for f in "${DATE_FMTS[@]}"; do [ "$f" = "$cur" ] && DEFAULT_IDX=$n; n=$((n+1)); done
+fi
+
+echo
+echo "How should reset times look in the tooltip? (shown with time remaining in parens)"
+n=1
+for f in "${DATE_FMTS[@]}"; do
+  printf "  %d) %s (in 2h 15m)\n" "$n" "$(date "+$f")"
+  n=$((n+1))
+done
+printf "Choice [1-%d] (default %d): " "${#DATE_FMTS[@]}" "$DEFAULT_IDX"
+read -r dchoice
+case "$dchoice" in
+  '' ) idx=$DEFAULT_IDX ;;
+  *[!0-9]* ) idx=$DEFAULT_IDX ;;
+  * ) idx=$dchoice ;;
+esac
+{ [ "$idx" -ge 1 ] && [ "$idx" -le "${#DATE_FMTS[@]}" ]; } || idx=$DEFAULT_IDX
+DATE_FMT="${DATE_FMTS[$((idx-1))]}"
+echo "Reset times: $(date "+$DATE_FMT") (in 2h 15m)"
+
+# Save credentials, preserving any existing settings and storing the date format.
 umask 077
-jq -cn --arg sk "$SK" --arg org "$ORG" '{sessionKey:$sk, organizationId:$org}' > "$CRED_FILE"
+OLD_SETTINGS='{}'
+if [ -r "$CRED_FILE" ]; then
+  OLD_SETTINGS=$(jq -c '.settings // {}' "$CRED_FILE" 2>/dev/null || echo '{}')
+  [ -n "$OLD_SETTINGS" ] || OLD_SETTINGS='{}'
+fi
+jq -cn --arg sk "$SK" --arg org "$ORG" --arg fmt "$DATE_FMT" --argjson s "$OLD_SETTINGS" \
+  '{sessionKey:$sk, organizationId:$org, settings: ($s + {dateFormat:$fmt})}' > "$CRED_FILE"
 chmod 600 "$CRED_FILE"
 echo "Saved credentials -> $CRED_FILE (chmod 600)"
 

@@ -58,6 +58,7 @@ SK=$(jq -r '.sessionKey // empty' "$CONFIG")
 ORG=$(jq -r '.organizationId // empty' "$CONFIG")
 WARN=$(jq -r '.settings.warnThreshold // 75' "$CONFIG")
 DANGER=$(jq -r '.settings.dangerThreshold // 90' "$CONFIG")
+DATE_FMT=$(jq -r '.settings.dateFormat // "%a %d %b %H:%M"' "$CONFIG")
 
 if [ -z "$SK" ] || [ -z "$ORG" ]; then
   emit "$ICON setup" "Incomplete credentials in $CONFIG.\nRun: $SCRIPT_DIR/setup.sh" "error"
@@ -81,7 +82,26 @@ weekly=$(echo "$resp" | jq -r '.seven_day.utilization // 0 | floor')
 s_reset=$(echo "$resp" | jq -r '.five_hour.resets_at // empty')
 w_reset=$(echo "$resp" | jq -r '.seven_day.resets_at // empty')
 
-fmt() { [ -n "$1" ] && date -d "$1" '+%a %d %b %H:%M' 2>/dev/null || echo "?"; }
+# Remaining time in a compact form, e.g. "1d 3h", "2h 15m", "5m".
+human() { # seconds
+  local d=$(( $1 / 86400 )) h=$(( ($1 % 86400) / 3600 )) m=$(( ($1 % 3600) / 60 ))
+  if   [ "$d" -gt 0 ]; then printf '%dd %dh' "$d" "$h"
+  elif [ "$h" -gt 0 ]; then printf '%dh %dm' "$h" "$m"
+  else printf '%dm' "$m"; fi
+}
+
+# Format a reset timestamp with the chosen date format, plus time left in parens.
+fmt() { # iso-timestamp
+  [ -n "$1" ] || { echo "?"; return; }
+  local when epoch left
+  when=$(date -d "$1" "+$DATE_FMT" 2>/dev/null) || { echo "?"; return; }
+  epoch=$(date -d "$1" +%s 2>/dev/null)
+  if [ -n "$epoch" ]; then
+    left=$(( epoch - $(date +%s) ))
+    [ "$left" -gt 0 ] && when="$when (in $(human "$left"))"
+  fi
+  echo "$when"
+}
 
 # Class is driven by whichever window is closest to its limit.
 peak=$session
