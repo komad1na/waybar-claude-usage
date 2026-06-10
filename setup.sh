@@ -82,10 +82,7 @@ install_waybar() {
       "on-click-right": "pkill -RTMIN+11 waybar"
     }
     | if (.["modules-right"] | index("custom/claude")) then .
-      else .["modules-right"] as $m | ($m | index("custom/stats")) as $i
-        | if $i then .["modules-right"] = ($m[0:$i] + ["custom/claude"] + $m[$i:])
-          else .["modules-right"] = ($m + ["custom/claude"]) end
-      end
+      else .["modules-right"] += ["custom/claude"] end
   ' "$WAYBAR_CFG" > "$tmp" && mv "$tmp" "$WAYBAR_CFG"
   echo "Updated $WAYBAR_CFG (backup made)."
 

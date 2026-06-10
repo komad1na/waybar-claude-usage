@@ -7,12 +7,10 @@
 # any transient failure we fall back to the last good value from a cache file
 # instead of showing an error. Output is Waybar JSON.
 #
-# Credentials are read from ./credentials.json (created by setup.sh), falling
-# back to the Electron widget's config if that exists.
+# Credentials are read from ./credentials.json (created by setup.sh).
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 CRED_FILE="$SCRIPT_DIR/credentials.json"
-WIDGET_CFG="$HOME/.config/claude-usage-widget/config.json"
 CACHE="${XDG_CACHE_HOME:-$HOME/.cache}/waybar-claude-usage.json"
 UA='Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36'
 ICON='󰚩'
@@ -45,12 +43,10 @@ fallback() { # reason
   fi
 }
 
-# Resolve which config holds the credentials.
+# Resolve the credentials file written by setup.sh.
 CONFIG=""
 if [ -r "$CRED_FILE" ] && [ -n "$(jq -r '.sessionKey // empty' "$CRED_FILE" 2>/dev/null)" ]; then
   CONFIG="$CRED_FILE"
-elif [ -r "$WIDGET_CFG" ] && [ -n "$(jq -r '.sessionKey // empty' "$WIDGET_CFG" 2>/dev/null)" ]; then
-  CONFIG="$WIDGET_CFG"
 fi
 
 if [ -z "$CONFIG" ]; then
