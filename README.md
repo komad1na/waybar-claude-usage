@@ -1,3 +1,4 @@
+
 # waybar-claude-usage
 
 A standalone [Waybar](https://github.com/Alexays/Waybar) module that shows your
@@ -8,6 +9,7 @@ queries the Claude API with `curl`.
 ```
 󰚩 5h:28% · 7d:4%
 ```
+<img width="407" height="113" alt="screenshot-2026-06-11_13-28-40" src="https://github.com/user-attachments/assets/bb2ff6b4-6d7e-45a7-9beb-88d7f2537a08" />
 
 Works on plain Waybar and on [Omarchy](https://omarchy.org/) / Hyprland.
 
