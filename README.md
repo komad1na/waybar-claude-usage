@@ -2,11 +2,11 @@
 
 A standalone [Waybar](https://github.com/Alexays/Waybar) module that shows your
 [Claude.ai](https://claude.ai) usage — the **5-hour session** and **7-day
-weekly** windows — right in your status bar. No Electron app, no daemon: it just
+weekly** windows — right in your status bar.Just
 queries the Claude API with `curl`.
 
 ```
-󰚩 5h 28%  7d 4%
+󰚩 5h:28% · 7d:4%
 ```
 
 Works on plain Waybar and on [Omarchy](https://omarchy.org/) / Hyprland.
@@ -22,7 +22,7 @@ cd waybar-claude-usage
 ```
 
 `setup.sh` asks for your **sessionKey**, auto-detects your org, lets you pick a
-reset-time format, then adds the module to your Waybar config and restarts it
+reset-time date format, then adds the module to your Waybar config and restarts it
 (existing config/style files are backed up first).
 
 ### Getting your sessionKey
@@ -48,7 +48,7 @@ The numbers are colored by how close you are to a limit:
 
 | Usage  | Color           |
 |--------|-----------------|
-| < 75 % | teal `#7aa2a2`  |
+| < 75 % | green `#7aa27a` |
 | ≥ 75 % | amber `#d6a85a` |
 | ≥ 90 % | red `#a55555`   |
 

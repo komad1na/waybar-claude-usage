@@ -21,7 +21,7 @@ CURL_TIMEOUT=15  # seconds per API request
 CACHE_TTL=900    # seconds before cached data counts as stale (settings.cacheTtl)
 # Per-number colors (Pango markup): only the % numbers are colored, each by its
 # own window's level. The icon and the "5h"/"7d" labels keep the theme default.
-C_LOW='#7aa2a2'    # below warnThreshold
+C_LOW='#7aa27a'    # below warnThreshold
 C_WARN='#d6a85a'   # >= warnThreshold
 C_DANGER='#a55555' # >= dangerThreshold
 
@@ -137,7 +137,7 @@ color_for() { # value
   elif [ "$1" -ge "$WARN" ];   then printf '%s' "$C_WARN"
   else printf '%s' "$C_LOW"; fi
 }
-text="$ICON 5h <span color=\"$(color_for "$session")\">${session}%</span>  7d <span color=\"$(color_for "$weekly")\">${weekly}%</span>"
+text="$ICON 5h:<span color=\"$(color_for "$session")\">${session}%</span> · 7d:<span color=\"$(color_for "$weekly")\">${weekly}%</span>"
 tooltip=$(printf 'Claude usage\nSession (5h):  %3s%%   resets %s\nWeekly  (7d):  %3s%%   resets %s' \
   "$session" "$(format_reset "$s_reset")" "$weekly" "$(format_reset "$w_reset")")
 
